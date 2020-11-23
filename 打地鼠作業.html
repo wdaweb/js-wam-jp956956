@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>打地鼠作業</title>
+    <style>
+      body {
+        background: url("./素材圖.png") no-repeat;
+        background-size: cover;
+        cursor: url("./unnamed100.png") 50 50, auto;
+      }
+      table {
+        border-collapse: collapse;
+        position: relative;
+        width: 600px;
+        height: 600px;
+        top: 655px;
+        left: 40%;
+      }
+      td {
+        border: 1px solid none;
+        width: 50px;
+        height: 50px;
+      }
+      li {
+        height: 35px;
+        width: 35px;
+        position: relative;
+        left: 370px;
+        top: 90px;
+        display: inline-block;
+        border-radius: 100px;
+      }
+      span {
+        height: 35px;
+        width: 35px;
+        position: relative;
+        left: 240px;
+        top: 260px;
+        font-size: 60px;
+        color: yellow;
+      }
+      .green {
+        background-color: greenyellow;
+      }
+      .yellow {
+        background-color: yellow;
+      }
+      .red {
+        background-color: red;
+      }
+      .goodBall {
+        border: 1px solid red;
+      }
+      .ball {
+        background: url("./20120507-02.jpg");
+        background-size: contain;
+      }
+      .hit {
+        background: url("./0429.png_300.png");
+        background-size: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <span id="score">0</span>
+    <!-- 球數統計燈號 -->
+    <ul>
+      <li class="greenball"></li>
+      <li class="greenball"></li>
+      <li class="greenball"></li>
+    </ul>
+    <ul>
+      <li class="yellowball"></li>
+      <li class="yellowball"></li>
+    </ul>
+    <ul>
+      <li class="redball"></li>
+      <li class="redball"></li>
+    </ul>
+
+    <table id="play">
+      <tr>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+      </tr>
+      <tr>
+        <td class="badBall"></td>
+        <td class="goodBall"></td>
+        <td class="goodBall"></td>
+        <td class="goodBall"></td>
+        <td class="badBall"></td>
+      </tr>
+      <tr>
+        <td class="badBall"></td>
+        <td class="goodBall"></td>
+        <td class="goodBall"></td>
+        <td class="goodBall"></td>
+        <td class="badBall"></td>
+      </tr>
+      <tr>
+        <td class="badBall"></td>
+        <td class="goodBall"></td>
+        <td class="goodBall"></td>
+        <td class="goodBall"></td>
+        <td class="badBall"></td>
+      </tr>
+      <tr>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+        <td class="badBall"></td>
+      </tr>
+    </table>
+    <input type="button" value="打者上場" id="playBall" />
+    <script>
+      // 抓取開始按鈕
+      const playBall = document.getElementById("playBall");
+      // 抓取投球的格子
+      const balls = document.querySelectorAll("#play td");
+      // 抓取好壞球及出局數
+      const yellowballs = document.getElementsByClassName("yellowball");
+      const greenballs = document.getElementsByClassName("greenball");
+      const redballs = document.getElementsByClassName("redball");
+      const Score = document.getElementById("score");
+      // 抓取判斷表格的好壞球
+      const goodBall = document.getElementsByClassName("goodBall");
+      const badBall = document.getElementsByClassName("badBall");
+      //   好壞球跑者出局數統計
+      let good = 0;
+      let bad = 0;
+      let out = 0;
+      let score = 0;
+      let pitcher = 0;
+
+      //   點擊開始打擊
+      playBall.onclick = () => {
+        // 每次打擊清空擊球畫面
+        for (const ball of balls) {
+          ball.classList.remove("hit");
+        }
+        score = score;
+        Score.innerText = score;
+        pitcher = setInterval(time, 1000);
+      };
+
+      // 遊戲的開始機制
+      function time() {
+        for (const ball of balls) {
+          ball.classList.remove("hit");
+          ball.classList.remove("ball");
+        }
+        // 當三顆好球或是四顆壞球就清空目前球數，若沒有就進入投球階段
+        if (good == 3 || bad == 4) {
+          soOrbb();
+        } else {
+          ballposition();
+        }
+      }
+      // 三振或保送
+      function soOrbb() {
+        while (good == 3) {
+          alert("三振");
+          good = 0;
+          bad = 0;
+          out++;
+          redballs[out - 1].classList.add("red");
+          while (out == 2) {
+            alert(`遊戲結束，你得到了${score}分`);
+            javascript: window.location.reload();
+            out++;
+          }
+          break;
+        }
+        while (bad == 4) {
+          alert("保送");
+          good = 0;
+          bad = 0;
+          break;
+        }
+        for (const greenball of greenballs) {
+          greenball.classList.remove("green");
+        }
+        for (const yellowball of yellowballs) {
+          yellowball.classList.remove("yellow");
+        }
+        for (const ball of balls) {
+          ball.classList.remove("ball");
+        }
+        clearInterval(pitcher);
+      }
+      //   投球位置
+      function ballposition() {
+        for (const ball of balls) {
+          ball.onclick = () => {
+            if (ball.classList.contains("ball")) {
+              ball.classList.remove("ball");
+              ball.classList.add("hit");
+              score++;
+              good = 0;
+              bad = 0;
+              Score.innerText = score;
+              for (const greenball of greenballs) {
+                greenball.classList.remove("green");
+              }
+              for (const yellowball of yellowballs) {
+                yellowball.classList.remove("yellow");
+              }
+              for (const ball of balls) {
+                ball.classList.remove("ball");
+              }
+              clearInterval(pitcher);
+            }
+          };
+        }
+        for (let i = 0; i < 1; i++) {
+          let random = Math.round(Math.random() * 25);
+          balls[random].classList.add("ball");
+          //   好壞球判斷(九宮格內是好球)
+          if (
+            random == 6 ||
+            random == 7 ||
+            random == 8 ||
+            random == 11 ||
+            random == 12 ||
+            random == 13 ||
+            random == 16 ||
+            random == 17 ||
+            random == 18
+          ) {
+            // 好球加一個黃燈
+            good++;
+            yellowballs[good - 1].classList.add("yellow");
+          } else {
+            // 壞球加一個綠燈
+            bad++;
+            greenballs[bad - 1].classList.add("green");
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<!-- 球隨時間增加越來越大 越接近90%分數越高 大於90%揮棒太慢-->
+<!-- 可以自己調整球速，寫出公式計算球到達時間 -->
